@@ -11,3 +11,42 @@
 .form-control {
     min-height: 46px;
 }
+
+.sidebar {
+    width: 260px;
+    min-height: 100vh;
+    background: linear-gradient(180deg, #062b55, #0d6efd);
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-brand {
+    padding: 28px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.sidebar-link {
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    padding: 11px 14px;
+    margin-bottom: 6px;
+    border-radius: 8px;
+    transition: 0.2s ease;
+}
+
+.sidebar-link:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+}
+
+.sidebar-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.topbar {
+    min-height: 70px;
+}
+
+.dashboard-card {
+    border-radius: 14px;
+}

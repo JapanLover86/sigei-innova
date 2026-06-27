@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Productos | SIGEI Innova{% endblock %}
+{% block page_title %}Gestión de productos{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 fw-bold mb-1">Productos</h1>
+        <p class="text-muted mb-0">
+            Registro y consulta de productos del inventario.
+        </p>
+    </div>
+
+    <a href="{% url 'producto_crear' %}" class="btn btn-primary">
+        Nuevo producto
+    </a>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Código</th>
+                    <th>Producto</th>
+                    <th>Categoría</th>
+                    <th>Marca</th>
+                    <th>Stock actual</th>
+                    <th>Stock mínimo</th>
+                    <th>Precio venta</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for producto in productos %}
+                    <tr>
+                        <td>{{ producto.codigo }}</td>
+                        <td>
+                            <strong>{{ producto.nombre }}</strong>
+                            <br>
+                            <small class="text-muted">{{ producto.unidad }}</small>
+                        </td>
+                        <td>{{ producto.categoria }}</td>
+                        <td>{{ producto.marca|default:"Sin marca" }}</td>
+                        <td>{{ producto.stock_actual }}</td>
+                        <td>{{ producto.stock_minimo }}</td>
+                        <td>S/ {{ producto.precio_venta }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-4">
+                            No existen productos registrados.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

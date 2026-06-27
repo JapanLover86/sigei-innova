@@ -1,95 +1,63 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIGEI Innova | Dashboard</title>
+{% extends "base.html" %}
 
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-    >
-</head>
+{% block title %}Dashboard | SIGEI Innova{% endblock %}
+{% block page_title %}Dashboard principal{% endblock %}
 
-<body class="bg-light">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="{% url 'dashboard_inicio' %}">
-                SIGEI Innova
-            </a>
+{% block content %}
+<div class="mb-4">
+    <h1 class="h3 fw-bold mb-1">
+        Bienvenido, {{ request.user.username }}
+    </h1>
 
-            <div class="d-flex align-items-center gap-3">
-                <span class="text-white small">
-                    {{ request.user.username }} · {{ rol }}
-                </span>
+    <p class="text-muted mb-0">
+        Rol asignado: <strong>{{ rol }}</strong>
+    </p>
+</div>
 
-                <form method="post" action="{% url 'logout' %}">
-                    {% csrf_token %}
-                    <button class="btn btn-outline-light btn-sm" type="submit">
-                        Cerrar sesión
-                    </button>
-                </form>
-            </div>
-        </div>
-    </nav>
-
-    <main class="container py-5">
-        <div class="mb-4">
-            <h1 class="h3 fw-bold">
-                Bienvenido, {{ request.user.username }}
-            </h1>
-
-            <p class="text-muted mb-0">
-                Rol asignado: <strong>{{ rol }}</strong>
-            </p>
-        </div>
-
-        <div class="row g-4">
-            <div class="col-md-3">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body">
-                        <p class="text-muted mb-1">Productos</p>
-                        <h2 class="h3 mb-0">0</h2>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body">
-                        <p class="text-muted mb-1">Stock bajo</p>
-                        <h2 class="h3 mb-0">0</h2>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body">
-                        <p class="text-muted mb-1">Entradas del mes</p>
-                        <h2 class="h3 mb-0">0</h2>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body">
-                        <p class="text-muted mb-1">Salidas del mes</p>
-                        <h2 class="h3 mb-0">0</h2>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <section class="card border-0 shadow-sm mt-4">
+<div class="row g-4">
+    <div class="col-md-6 col-xl-3">
+        <div class="card border-0 shadow-sm dashboard-card">
             <div class="card-body">
-                <h2 class="h5">Estado del Sprint 1</h2>
-                <p class="mb-0 text-muted">
-                    Base de autenticación, usuarios, roles y dashboard inicial.
-                </p>
+                <p class="text-muted mb-1">Productos registrados</p>
+                <h2 class="h3 mb-0">{{ total_productos }}</h2>
             </div>
-        </section>
-    </main>
-</body>
-</html>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <div class="card border-0 shadow-sm dashboard-card">
+            <div class="card-body">
+                <p class="text-muted mb-1">Productos con stock bajo</p>
+                <h2 class="h3 mb-0 text-danger">{{ productos_stock_bajo }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <div class="card border-0 shadow-sm dashboard-card">
+            <div class="card-body">
+                <p class="text-muted mb-1">Entradas del mes</p>
+                <h2 class="h3 mb-0 text-success">{{ entradas_mes }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <div class="card border-0 shadow-sm dashboard-card">
+            <div class="card-body">
+                <p class="text-muted mb-1">Salidas del mes</p>
+                <h2 class="h3 mb-0 text-primary">{{ salidas_mes }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="card border-0 shadow-sm mt-4">
+    <div class="card-body">
+        <h2 class="h5 fw-bold">Estado del Sprint 1</h2>
+        <p class="mb-0 text-muted">
+            Autenticación, perfiles, roles, dashboard inicial y productos.
+        </p>
+    </div>
+</section>
+{% endblock %}
