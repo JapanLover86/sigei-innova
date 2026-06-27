@@ -1,0 +1,13 @@
+.login-page {
+    background: linear-gradient(135deg, #0d6efd, #0b2d5c);
+}
+
+.login-card {
+    width: 100%;
+    max-width: 430px;
+    border-radius: 18px;
+}
+
+.form-control {
+    min-height: 46px;
+}
