@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     # Apps SIGEI
-    "usuarios",
+    "usuarios.apps.UsuariosConfig",
     "productos",
     "inventario",
     "compras",
