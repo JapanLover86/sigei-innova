@@ -37,6 +37,7 @@
                     <th>Stock actual</th>
                     <th>Stock mínimo</th>
                     <th>Precio venta</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
 
@@ -54,10 +55,35 @@
                         <td>{{ producto.stock_actual }}</td>
                         <td>{{ producto.stock_minimo }}</td>
                         <td>S/ {{ producto.precio_venta }}</td>
+
+                        <td class="text-nowrap">
+                            <a
+                                href="{% url 'producto_editar' producto.id_producto %}"
+                                class="btn btn-sm btn-outline-primary"
+                            >
+                                Editar
+                            </a>
+
+                            {% if perfil.rol == "ADMIN" %}
+                                <form
+                                    method="post"
+                                    action="{% url 'producto_desactivar' producto.id_producto %}"
+                                    class="d-inline"
+                                    onsubmit="return confirm('¿Deseas desactivar este producto?');"
+                                >
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        Desactivar
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </td>
+
+                        
                     </tr>
                 {% empty %}
                     <tr>
-                        <td colspan="7" class="text-center text-muted py-4">
+                        <td colspan="8" class="text-center text-muted py-4">
                             No existen productos registrados.
                         </td>
                     </tr>

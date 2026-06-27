@@ -6,7 +6,7 @@ class Categoria(models.Model):
     nombre = models.CharField(max_length=100)
     descripcion = models.CharField(max_length=255, blank=True, null=True)
     estado = models.BooleanField(default=True)
-    fecha_creacion = models.DateTimeField()
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         managed = False
@@ -21,7 +21,7 @@ class Marca(models.Model):
     nombre = models.CharField(max_length=100)
     descripcion = models.CharField(max_length=255, blank=True, null=True)
     estado = models.BooleanField(default=True)
-    fecha_creacion = models.DateTimeField()
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         managed = False
@@ -59,7 +59,7 @@ class Producto(models.Model):
     stock_minimo = models.DecimalField(max_digits=12, decimal_places=2)
     stock_actual = models.DecimalField(max_digits=12, decimal_places=2)
     estado = models.BooleanField(default=True)
-    fecha_creacion = models.DateTimeField()
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         managed = False

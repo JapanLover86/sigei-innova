@@ -6,6 +6,7 @@ from .models import Producto
 class ProductoForm(forms.ModelForm):
     class Meta:
         model = Producto
+
         fields = [
             "categoria",
             "marca",
@@ -29,6 +30,8 @@ class ProductoForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        usuario = kwargs.pop("usuario", None)
+
         super().__init__(*args, **kwargs)
 
         for campo in self.fields.values():
@@ -37,3 +40,8 @@ class ProductoForm(forms.ModelForm):
         self.fields["categoria"].widget.attrs["class"] = "form-select"
         self.fields["marca"].widget.attrs["class"] = "form-select"
         self.fields["estado"].widget.attrs["class"] = "form-check-input"
+
+        # Solo el Administrador puede activar o desactivar productos.
+        if usuario and hasattr(usuario, "perfil"):
+            if usuario.perfil.rol != "ADMIN":
+                self.fields.pop("estado")
