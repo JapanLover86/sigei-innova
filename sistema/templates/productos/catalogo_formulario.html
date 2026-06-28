@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}{{ titulo }} | SIGEI Innova{% endblock %}
+{% block page_title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 col-xl-7">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <form method="post">
+                    {% csrf_token %}
+
+                    {% for field in formulario %}
+                        <div class="mb-3">
+                            {% if field.field.widget.input_type == "checkbox" %}
+                                <div class="form-check">
+                                    {{ field }}
+                                    <label class="form-check-label">
+                                        {{ field.label }}
+                                    </label>
+                                </div>
+                            {% else %}
+                                <label class="form-label">
+                                    {{ field.label }}
+                                </label>
+
+                                {{ field }}
+                            {% endif %}
+
+                            {% if field.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ field.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary">
+                            Guardar
+                        </button>
+
+                        <a href="{% url volver_url %}" class="btn btn-outline-secondary">
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

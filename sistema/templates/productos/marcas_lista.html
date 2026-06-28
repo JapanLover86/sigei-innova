@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Marcas | SIGEI Innova{% endblock %}
+{% block page_title %}Gestión de marcas{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 fw-bold mb-1">Marcas</h1>
+        <p class="text-muted mb-0">
+            Registro de marcas asociadas a los productos.
+        </p>
+    </div>
+
+    <a href="{% url 'marca_crear' %}" class="btn btn-primary">
+        Nueva marca
+    </a>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for marca in marcas %}
+                    <tr>
+                        <td><strong>{{ marca.nombre }}</strong></td>
+                        <td>{{ marca.descripcion|default:"Sin descripción" }}</td>
+                        <td>
+                            {% if marca.estado %}
+                                <span class="badge text-bg-success">Activa</span>
+                            {% else %}
+                                <span class="badge text-bg-secondary">Inactiva</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-nowrap">
+                            <a
+                                href="{% url 'marca_editar' marca.id_marca %}"
+                                class="btn btn-sm btn-outline-primary"
+                            >
+                                Editar
+                            </a>
+
+                            {% if perfil.rol == "ADMIN" and marca.estado %}
+                                <form
+                                    method="post"
+                                    action="{% url 'marca_desactivar' marca.id_marca %}"
+                                    class="d-inline"
+                                    onsubmit="return confirm('¿Deseas desactivar esta marca?');"
+                                >
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        Desactivar
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center text-muted py-4">
+                            No existen marcas registradas.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

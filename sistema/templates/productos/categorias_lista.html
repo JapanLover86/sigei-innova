@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Categorías | SIGEI Innova{% endblock %}
+{% block page_title %}Gestión de categorías{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 fw-bold mb-1">Categorías</h1>
+        <p class="text-muted mb-0">
+            Clasificación de productos de Ferretería Innova.
+        </p>
+    </div>
+
+    <a href="{% url 'categoria_crear' %}" class="btn btn-primary">
+        Nueva categoría
+    </a>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for categoria in categorias %}
+                    <tr>
+                        <td><strong>{{ categoria.nombre }}</strong></td>
+                        <td>{{ categoria.descripcion|default:"Sin descripción" }}</td>
+                        <td>
+                            {% if categoria.estado %}
+                                <span class="badge text-bg-success">Activa</span>
+                            {% else %}
+                                <span class="badge text-bg-secondary">Inactiva</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-nowrap">
+                            <a
+                                href="{% url 'categoria_editar' categoria.id_categoria %}"
+                                class="btn btn-sm btn-outline-primary"
+                            >
+                                Editar
+                            </a>
+
+                            {% if perfil.rol == "ADMIN" and categoria.estado %}
+                                <form
+                                    method="post"
+                                    action="{% url 'categoria_desactivar' categoria.id_categoria %}"
+                                    class="d-inline"
+                                    onsubmit="return confirm('¿Deseas desactivar esta categoría?');"
+                                >
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        Desactivar
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center text-muted py-4">
+                            No existen categorías registradas.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

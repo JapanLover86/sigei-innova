@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Producto
+from .models import Categoria, Marca, Producto
 
 
 class ProductoForm(forms.ModelForm):
@@ -42,6 +42,68 @@ class ProductoForm(forms.ModelForm):
         self.fields["estado"].widget.attrs["class"] = "form-check-input"
 
         # Solo el Administrador puede activar o desactivar productos.
+        if usuario and hasattr(usuario, "perfil"):
+            if usuario.perfil.rol != "ADMIN":
+                self.fields.pop("estado")
+
+
+class CategoriaForm(forms.ModelForm):
+    class Meta:
+        model = Categoria
+        fields = [
+            "nombre",
+            "descripcion",
+            "estado",
+        ]
+
+        widgets = {
+            "descripcion": forms.Textarea(
+                attrs={
+                    "rows": 3,
+                }
+            ),
+        }
+
+    def __init__(self, *args, **kwargs):
+        usuario = kwargs.pop("usuario", None)
+        super().__init__(*args, **kwargs)
+
+        for campo in self.fields.values():
+            campo.widget.attrs["class"] = "form-control"
+
+        self.fields["estado"].widget.attrs["class"] = "form-check-input"
+
+        if usuario and hasattr(usuario, "perfil"):
+            if usuario.perfil.rol != "ADMIN":
+                self.fields.pop("estado")
+
+
+class MarcaForm(forms.ModelForm):
+    class Meta:
+        model = Marca
+        fields = [
+            "nombre",
+            "descripcion",
+            "estado",
+        ]
+
+        widgets = {
+            "descripcion": forms.Textarea(
+                attrs={
+                    "rows": 3,
+                }
+            ),
+        }
+
+    def __init__(self, *args, **kwargs):
+        usuario = kwargs.pop("usuario", None)
+        super().__init__(*args, **kwargs)
+
+        for campo in self.fields.values():
+            campo.widget.attrs["class"] = "form-control"
+
+        self.fields["estado"].widget.attrs["class"] = "form-check-input"
+
         if usuario and hasattr(usuario, "perfil"):
             if usuario.perfil.rol != "ADMIN":
                 self.fields.pop("estado")
