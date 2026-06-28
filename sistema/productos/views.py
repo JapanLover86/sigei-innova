@@ -1,10 +1,15 @@
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
+
 from usuarios.decorators import rol_requerido
 
 from .forms import CategoriaForm, MarcaForm, ProductoForm
 from .models import Categoria, Marca, Producto
 
+
+# -------------------------
+# PRODUCTOS
+# -------------------------
 
 @rol_requerido("ADMIN", "ALMACENERO")
 def producto_lista(request):
@@ -22,7 +27,10 @@ def producto_lista(request):
 @rol_requerido("ADMIN", "ALMACENERO")
 def producto_crear(request):
     if request.method == "POST":
-        formulario = ProductoForm(request.POST, usuario=request.user)
+        formulario = ProductoForm(
+            request.POST,
+            usuario=request.user,
+        )
 
         if formulario.is_valid():
             formulario.save()
@@ -40,19 +48,27 @@ def producto_crear(request):
         },
     )
 
+
 @rol_requerido("ADMIN", "ALMACENERO")
 def producto_editar(request, id_producto):
     producto = get_object_or_404(Producto, id_producto=id_producto)
 
     if request.method == "POST":
-        formulario = ProductoForm(request.POST, instance=producto, usuario=request.user)
+        formulario = ProductoForm(
+            request.POST,
+            instance=producto,
+            usuario=request.user,
+        )
 
         if formulario.is_valid():
             formulario.save()
             messages.success(request, "Producto actualizado correctamente.")
             return redirect("producto_lista")
     else:
-        formulario = ProductoForm(instance=producto, usuario=request.user)
+        formulario = ProductoForm(
+            instance=producto,
+            usuario=request.user,
+        )
 
     return render(
         request,
@@ -62,6 +78,7 @@ def producto_editar(request, id_producto):
             "titulo": "Editar producto",
         },
     )
+
 
 @rol_requerido("ADMIN")
 def producto_desactivar(request, id_producto):
@@ -78,6 +95,10 @@ def producto_desactivar(request, id_producto):
 
     return redirect("producto_lista")
 
+
+# -------------------------
+# CATEGORÍAS
+# -------------------------
 
 @rol_requerido("ADMIN", "ALMACENERO")
 def categoria_lista(request):
@@ -166,11 +187,15 @@ def categoria_desactivar(request, id_categoria):
 
         messages.success(
             request,
-            f"La categoría '{categoria.nombre}' fue desactivada.",
+            f"La categoría '{categoria.nombre}' fue desactivada correctamente.",
         )
 
     return redirect("categoria_lista")
 
+
+# -------------------------
+# MARCAS
+# -------------------------
 
 @rol_requerido("ADMIN", "ALMACENERO")
 def marca_lista(request):
@@ -259,7 +284,7 @@ def marca_desactivar(request, id_marca):
 
         messages.success(
             request,
-            f"La marca '{marca.nombre}' fue desactivada.",
+            f"La marca '{marca.nombre}' fue desactivada correctamente.",
         )
 
     return redirect("marca_lista")

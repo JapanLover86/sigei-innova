@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Registrar salida | SIGEI Innova{% endblock %}
+{% block page_title %}Registrar salida{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 col-xl-7">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h4 fw-bold mb-2">
+                    Registrar salida de productos
+                </h1>
+
+                <p class="text-muted mb-4">
+                    Registra una venta o salida de almacén.
+                    El sistema impedirá retirar más stock del disponible.
+                </p>
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    {% for field in formulario %}
+                        <div class="mb-3">
+                            <label class="form-label">
+                                {{ field.label }}
+                            </label>
+
+                            {{ field }}
+
+                            {% if field.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ field.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-danger">
+                            Guardar salida
+                        </button>
+
+                        <a
+                            href="{% url 'inventario_lista' %}"
+                            class="btn btn-outline-secondary"
+                        >
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

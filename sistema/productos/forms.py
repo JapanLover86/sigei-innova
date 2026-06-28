@@ -41,7 +41,7 @@ class ProductoForm(forms.ModelForm):
         self.fields["marca"].widget.attrs["class"] = "form-select"
         self.fields["estado"].widget.attrs["class"] = "form-check-input"
 
-        # Solo el Administrador puede activar o desactivar productos.
+        # Solo el Administrador puede modificar el estado.
         if usuario and hasattr(usuario, "perfil"):
             if usuario.perfil.rol != "ADMIN":
                 self.fields.pop("estado")
@@ -50,6 +50,7 @@ class ProductoForm(forms.ModelForm):
 class CategoriaForm(forms.ModelForm):
     class Meta:
         model = Categoria
+
         fields = [
             "nombre",
             "descripcion",
@@ -66,6 +67,7 @@ class CategoriaForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         usuario = kwargs.pop("usuario", None)
+
         super().__init__(*args, **kwargs)
 
         for campo in self.fields.values():
@@ -73,6 +75,7 @@ class CategoriaForm(forms.ModelForm):
 
         self.fields["estado"].widget.attrs["class"] = "form-check-input"
 
+        # El almacenero crea/edita, pero no activa o desactiva.
         if usuario and hasattr(usuario, "perfil"):
             if usuario.perfil.rol != "ADMIN":
                 self.fields.pop("estado")
@@ -81,6 +84,7 @@ class CategoriaForm(forms.ModelForm):
 class MarcaForm(forms.ModelForm):
     class Meta:
         model = Marca
+
         fields = [
             "nombre",
             "descripcion",
@@ -97,6 +101,7 @@ class MarcaForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         usuario = kwargs.pop("usuario", None)
+
         super().__init__(*args, **kwargs)
 
         for campo in self.fields.values():
@@ -104,6 +109,7 @@ class MarcaForm(forms.ModelForm):
 
         self.fields["estado"].widget.attrs["class"] = "form-check-input"
 
+        # El almacenero crea/edita, pero no activa o desactiva.
         if usuario and hasattr(usuario, "perfil"):
             if usuario.perfil.rol != "ADMIN":
                 self.fields.pop("estado")

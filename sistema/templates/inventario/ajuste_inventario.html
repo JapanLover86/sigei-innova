@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Ajuste de inventario | SIGEI Innova{% endblock %}
+{% block page_title %}Ajuste de inventario{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 col-xl-7">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h4 fw-bold mb-2">
+                    Ajuste de inventario
+                </h1>
+
+                <p class="text-muted mb-4">
+                    Registra la cantidad física contada en almacén.
+                    El sistema conservará el historial y creará un movimiento
+                    de tipo ajuste en el Kardex.
+                </p>
+
+                <div class="alert alert-warning small">
+                    Usa esta opción solamente cuando exista una diferencia entre
+                    el stock del sistema y el conteo físico real.
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    {% for field in formulario %}
+                        <div class="mb-3">
+                            <label class="form-label">
+                                {{ field.label }}
+                            </label>
+
+                            {{ field }}
+
+                            {% if field.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ field.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-warning">
+                            Registrar ajuste
+                        </button>
+
+                        <a
+                            href="{% url 'inventario_lista' %}"
+                            class="btn btn-outline-secondary"
+                        >
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

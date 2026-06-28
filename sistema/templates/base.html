@@ -35,19 +35,43 @@
                     <a class="sidebar-link" href="{% url 'producto_lista' %}">
                         Productos
                     </a>
+
+                    <a class="sidebar-link ms-3 small" href="{% url 'categoria_lista' %}">
+                        Categorías
+                    </a>
+
+                    <a class="sidebar-link ms-3 small" href="{% url 'marca_lista' %}">
+                        Marcas
+                    </a>
                 {% endif %}
 
                 {% if perfil.rol == "ADMIN" or perfil.rol == "ALMACENERO" %}
-                    <a class="sidebar-link" href="#">
+                    <a class="sidebar-link" href="{% url 'inventario_lista' %}">
                         Inventario
                     </a>
 
-                    <a class="sidebar-link" href="#">
+                    <a class="sidebar-link ms-3 small" href="{% url 'kardex_lista' %}">
+                        Kardex
+                    </a>
+
+                    <a class="sidebar-link ms-3 small" href="{% url 'ajuste_inventario' %}">
+                        Ajuste de stock
+                    </a>
+
+                    <a class="sidebar-link" href="{% url 'entrada_crear' %}">
                         Entradas
                     </a>
 
-                    <a class="sidebar-link" href="#">
+                    <a class="sidebar-link ms-3 small" href="{% url 'proveedor_lista' %}">
+                        Proveedores
+                    </a>
+
+                    <a class="sidebar-link" href="{% url 'salida_crear' %}">
                         Salidas
+                    </a>
+
+                    <a class="sidebar-link ms-3 small" href="{% url 'cliente_lista' %}">
+                        Clientes
                     </a>
                 {% endif %}
 

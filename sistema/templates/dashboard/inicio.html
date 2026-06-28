@@ -1,63 +1,245 @@
 {% extends "base.html" %}
 
 {% block title %}Dashboard | SIGEI Innova{% endblock %}
-{% block page_title %}Dashboard principal{% endblock %}
+{% block page_title %}Panel principal{% endblock %}
 
 {% block content %}
-<div class="mb-4">
-    <h1 class="h3 fw-bold mb-1">
-        Bienvenido, {{ request.user.username }}
-    </h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 fw-bold mb-1">
+            Bienvenido, {{ request.user.username }}
+        </h1>
 
-    <p class="text-muted mb-0">
-        Rol asignado: <strong>{{ rol }}</strong>
-    </p>
+        <p class="text-muted mb-0">
+            Resumen operativo del inventario de Ferretería Innova.
+        </p>
+    </div>
+
+    {% if perfil.rol == "ADMIN" or perfil.rol == "ALMACENERO" %}
+        <div class="d-flex gap-2">
+            <a href="{% url 'entrada_crear' %}" class="btn btn-success">
+                Registrar entrada
+            </a>
+
+            <a href="{% url 'salida_crear' %}" class="btn btn-danger">
+                Registrar salida
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-6 col-xl-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <p class="text-muted small mb-2">
+                    Productos activos
+                </p>
+
+                <h2 class="fw-bold mb-0">
+                    {{ total_productos }}
+                </h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <p class="text-muted small mb-2">
+                    Valor del inventario
+                </p>
+
+                <h2 class="fw-bold mb-0">
+                    S/ {{ valor_inventario|floatformat:2 }}
+                </h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <p class="text-muted small mb-2">
+                    Ventas registradas hoy
+                </p>
+
+                <h2 class="fw-bold mb-0 text-success">
+                    S/ {{ ventas_hoy|floatformat:2 }}
+                </h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <p class="text-muted small mb-2">
+                    Alertas de stock
+                </p>
+
+                <h2 class="fw-bold mb-0 text-danger">
+                    {{ total_stock_critico|add:total_stock_bajo }}
+                </h2>
+
+                <small class="text-muted">
+                    Crítico: {{ total_stock_critico }} |
+                    Bajo: {{ total_stock_bajo }}
+                </small>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="row g-4">
-    <div class="col-md-6 col-xl-3">
-        <div class="card border-0 shadow-sm dashboard-card">
-            <div class="card-body">
-                <p class="text-muted mb-1">Productos registrados</p>
-                <h2 class="h3 mb-0">{{ total_productos }}</h2>
+    <div class="col-xl-7">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="h5 fw-bold mb-1">
+                            Alertas de stock
+                        </h2>
+
+                        <p class="text-muted small mb-0">
+                            Productos que requieren revisión.
+                        </p>
+                    </div>
+
+                    <a
+                        href="{% url 'inventario_lista' %}"
+                        class="btn btn-sm btn-outline-primary"
+                    >
+                        Ver inventario
+                    </a>
+                </div>
+            </div>
+
+            <div class="card-body px-4 pb-4">
+                {% if alertas_stock %}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Stock actual</th>
+                                    <th>Stock mínimo</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {% for producto in alertas_stock %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ producto.nombre }}</strong>
+                                            <div class="small text-muted">
+                                                {{ producto.codigo }}
+                                            </div>
+                                        </td>
+
+                                        <td>
+                                            {{ producto.stock_actual }}
+                                        </td>
+
+                                        <td>
+                                            {{ producto.stock_minimo }}
+                                        </td>
+
+                                        <td>
+                                            {% if producto.stock_actual <= 0 %}
+                                                <span class="badge text-bg-danger">
+                                                    Sin stock
+                                                </span>
+                                            {% else %}
+                                                <span class="badge text-bg-warning">
+                                                    Stock bajo
+                                                </span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-success mb-0">
+                        No existen alertas de stock. El inventario está controlado.
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
 
-    <div class="col-md-6 col-xl-3">
-        <div class="card border-0 shadow-sm dashboard-card">
-            <div class="card-body">
-                <p class="text-muted mb-1">Productos con stock bajo</p>
-                <h2 class="h3 mb-0 text-danger">{{ productos_stock_bajo }}</h2>
-            </div>
-        </div>
-    </div>
+    <div class="col-xl-5">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="h5 fw-bold mb-1">
+                            Movimientos recientes
+                        </h2>
 
-    <div class="col-md-6 col-xl-3">
-        <div class="card border-0 shadow-sm dashboard-card">
-            <div class="card-body">
-                <p class="text-muted mb-1">Entradas del mes</p>
-                <h2 class="h3 mb-0 text-success">{{ entradas_mes }}</h2>
-            </div>
-        </div>
-    </div>
+                        <p class="text-muted small mb-0">
+                            Últimas operaciones registradas.
+                        </p>
+                    </div>
 
-    <div class="col-md-6 col-xl-3">
-        <div class="card border-0 shadow-sm dashboard-card">
-            <div class="card-body">
-                <p class="text-muted mb-1">Salidas del mes</p>
-                <h2 class="h3 mb-0 text-primary">{{ salidas_mes }}</h2>
+                    <a
+                        href="{% url 'kardex_lista' %}"
+                        class="btn btn-sm btn-outline-dark"
+                    >
+                        Kardex
+                    </a>
+                </div>
+            </div>
+
+            <div class="card-body px-4 pb-4">
+                {% if movimientos_recientes %}
+                    <div class="list-group list-group-flush">
+                        {% for movimiento in movimientos_recientes %}
+                            <div class="list-group-item px-0">
+                                <div class="d-flex justify-content-between gap-3">
+                                    <div>
+                                        <strong>
+                                            {{ movimiento.producto.nombre }}
+                                        </strong>
+
+                                        <div class="small text-muted">
+                                            {{ movimiento.referencia|default:"Sin referencia" }}
+                                        </div>
+                                    </div>
+
+                                    <div class="text-end">
+                                        {% if movimiento.tipo_movimiento == "ENTRADA" %}
+                                            <span class="badge text-bg-success">
+                                                +{{ movimiento.cantidad }}
+                                            </span>
+                                        {% elif movimiento.tipo_movimiento == "SALIDA" %}
+                                            <span class="badge text-bg-danger">
+                                                -{{ movimiento.cantidad }}
+                                            </span>
+                                        {% else %}
+                                            <span class="badge text-bg-warning">
+                                                Ajuste
+                                            </span>
+                                        {% endif %}
+
+                                        <div class="small text-muted mt-1">
+                                            {{ movimiento.fecha|date:"d/m/Y H:i" }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted mb-0">
+                        Aún no existen movimientos registrados.
+                    </p>
+                {% endif %}
             </div>
         </div>
     </div>
 </div>
-
-<section class="card border-0 shadow-sm mt-4">
-    <div class="card-body">
-        <h2 class="h5 fw-bold">Estado del Sprint 1</h2>
-        <p class="mb-0 text-muted">
-            Autenticación, perfiles, roles, dashboard inicial y productos.
-        </p>
-    </div>
-</section>
 {% endblock %}

@@ -21,6 +21,14 @@ class PerfilUsuario(models.Model):
     usa_google = models.BooleanField(default=False)
     mfa_activo = models.BooleanField(default=True)
     estado = models.BooleanField(default=True)
+
+    id_usuario_sistema = models.PositiveIntegerField(
+    null=True,
+    blank=True,
+    unique=True,
+    verbose_name="ID de usuario en SQL Server",
+    )
+    
     fecha_creacion = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

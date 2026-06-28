@@ -16,6 +16,7 @@ from .views import (
 )
 
 urlpatterns = [
+    # Productos
     path("", producto_lista, name="producto_lista"),
     path("nuevo/", producto_crear, name="producto_crear"),
     path("<int:id_producto>/editar/", producto_editar, name="producto_editar"),
@@ -25,6 +26,7 @@ urlpatterns = [
         name="producto_desactivar",
     ),
 
+    # Categorías
     path("categorias/", categoria_lista, name="categoria_lista"),
     path("categorias/nueva/", categoria_crear, name="categoria_crear"),
     path(
@@ -38,6 +40,7 @@ urlpatterns = [
         name="categoria_desactivar",
     ),
 
+    # Marcas
     path("marcas/", marca_lista, name="marca_lista"),
     path("marcas/nueva/", marca_crear, name="marca_crear"),
     path(

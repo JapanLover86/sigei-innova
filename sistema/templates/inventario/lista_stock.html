@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Inventario actual | SIGEI Innova{% endblock %}
+{% block page_title %}Inventario actual{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 fw-bold mb-1">Inventario actual</h1>
+        <p class="text-muted mb-0">
+            Consulta el stock disponible de cada producto.
+        </p>
+    </div>
+
+    <div class="d-flex gap-2">
+        <a href="{% url 'entrada_crear' %}" class="btn btn-success">
+            Registrar entrada
+        </a>
+
+        <a href="{% url 'salida_crear' %}" class="btn btn-danger">
+            Registrar salida
+        </a>
+
+        <a href="{% url 'stock_inicial' %}" class="btn btn-primary">
+            Stock inicial
+        </a>
+
+        <a href="{% url 'ajuste_inventario' %}" class="btn btn-warning">
+            Ajustar stock
+        </a>
+
+        <a href="{% url 'kardex_lista' %}" class="btn btn-outline-dark">
+            Ver Kardex
+        </a>
+    </div>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags|default:'info' }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Código</th>
+                    <th>Producto</th>
+                    <th>Categoría</th>
+                    <th>Marca</th>
+                    <th>Stock actual</th>
+                    <th>Stock mínimo</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for producto in productos %}
+                    <tr>
+                        <td>{{ producto.codigo }}</td>
+                        <td>
+                            <strong>{{ producto.nombre }}</strong>
+                            <div class="small text-muted">
+                                {{ producto.unidad }}
+                            </div>
+                        </td>
+                        <td>{{ producto.categoria.nombre }}</td>
+                        <td>{{ producto.marca.nombre }}</td>
+                        <td>
+                            {% if producto.stock_actual <= producto.stock_minimo %}
+                                <span class="badge text-bg-danger">
+                                    {{ producto.stock_actual }}
+                                </span>
+                            {% else %}
+                                <span class="badge text-bg-success">
+                                    {{ producto.stock_actual }}
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>{{ producto.stock_minimo }}</td>
+                        <td>
+                            {% if producto.stock_actual <= producto.stock_minimo %}
+                                <span class="text-danger small">
+                                    Stock bajo
+                                </span>
+                            {% else %}
+                                <span class="text-success small">
+                                    Disponible
+                                </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-4">
+                            No existen productos activos registrados.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
