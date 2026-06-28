@@ -162,3 +162,41 @@ class MovimientoStock(models.Model):
 
     def __str__(self):
         return f"{self.tipo_movimiento} - {self.producto.nombre}"
+
+
+class Bitacora(models.Model):
+    id_bitacora = models.AutoField(primary_key=True)
+
+    id_usuario = models.IntegerField(
+        blank=True,
+        null=True,
+    )
+
+    accion = models.CharField(max_length=150)
+
+    modulo = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+    )
+
+    descripcion = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+    )
+
+    ip_origen = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+    )
+
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        managed = False
+        db_table = "bitacora"
+
+    def __str__(self):
+        return f"{self.fecha:%d/%m/%Y %H:%M} - {self.accion}"

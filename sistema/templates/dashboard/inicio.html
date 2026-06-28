@@ -242,4 +242,131 @@
         </div>
     </div>
 </div>
+
+<div class="row g-4 mt-1">
+    <div class="col-xl-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h2 class="h5 fw-bold mb-1">
+                    Ventas de los últimos 7 días
+                </h2>
+
+                <p class="text-muted small mb-0">
+                    Total de ventas registradas por día.
+                </p>
+            </div>
+
+            <div class="card-body px-4 pb-4">
+                <canvas id="graficoVentas"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h2 class="h5 fw-bold mb-1">
+                    Productos más vendidos
+                </h2>
+
+                <p class="text-muted small mb-0">
+                    Cantidad vendida durante los últimos 30 días.
+                </p>
+            </div>
+
+            <div class="card-body px-4 pb-4">
+                <canvas id="graficoProductos"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+{{ etiquetas_ventas|json_script:"etiquetas-ventas-data" }}
+{{ datos_ventas|json_script:"datos-ventas-data" }}
+
+{{ etiquetas_productos|json_script:"etiquetas-productos-data" }}
+{{ datos_productos|json_script:"datos-productos-data" }}
+
+<script>
+    const etiquetasVentas = JSON.parse(
+        document.getElementById("etiquetas-ventas-data").textContent
+    );
+
+    const datosVentas = JSON.parse(
+        document.getElementById("datos-ventas-data").textContent
+    );
+
+    const etiquetasProductos = JSON.parse(
+        document.getElementById("etiquetas-productos-data").textContent
+    );
+
+    const datosProductos = JSON.parse(
+        document.getElementById("datos-productos-data").textContent
+    );
+
+    new Chart(
+        document.getElementById("graficoVentas"),
+        {
+            type: "line",
+            data: {
+                labels: etiquetasVentas,
+                datasets: [
+                    {
+                        label: "Ventas (S/)",
+                        data: datosVentas,
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true,
+                    }
+                ],
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                    },
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                    },
+                },
+            },
+        }
+    );
+
+    new Chart(
+        document.getElementById("graficoProductos"),
+        {
+            type: "bar",
+            data: {
+                labels: etiquetasProductos,
+                datasets: [
+                    {
+                        label: "Unidades vendidas",
+                        data: datosProductos,
+                        borderWidth: 1,
+                    }
+                ],
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                    },
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                    },
+                },
+            },
+        }
+    );
+</script>
+
 {% endblock %}

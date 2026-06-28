@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}Usuarios | SIGEI Innova{% endblock %}
+{% block page_title %}Gestión de usuarios{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 fw-bold mb-1">
+            Usuarios del sistema
+        </h1>
+
+        <p class="text-muted mb-0">
+            Administración de cuentas, roles y permisos operativos.
+        </p>
+    </div>
+
+    <a href="{% url 'usuario_crear' %}" class="btn btn-primary">
+        Nuevo usuario
+    </a>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags|default:'info' }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Usuario</th>
+                    <th>Nombres</th>
+                    <th>Rol</th>
+                    <th>Teléfono</th>
+                    <th>ID SQL Server</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for usuario in usuarios %}
+                    <tr>
+                        <td>
+                            <strong>{{ usuario.username }}</strong>
+                            <div class="small text-muted">
+                                {{ usuario.email|default:"Sin correo registrado" }}
+                            </div>
+                        </td>
+
+                        <td>
+                            {{ usuario.first_name }} {{ usuario.last_name }}
+                        </td>
+
+                        <td>
+                            {% if usuario.perfil %}
+                                <span class="badge text-bg-primary">
+                                    {{ usuario.perfil.get_rol_display }}
+                                </span>
+                            {% else %}
+                                <span class="badge text-bg-secondary">
+                                    Sin perfil
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {{ usuario.perfil.telefono|default:"-" }}
+                        </td>
+
+                        <td>
+                            {{ usuario.perfil.id_usuario_sistema|default:"-" }}
+                        </td>
+
+                        <td>
+                            {% if usuario.is_active %}
+                                <span class="badge text-bg-success">
+                                    Activo
+                                </span>
+                            {% else %}
+                                <span class="badge text-bg-secondary">
+                                    Inactivo
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <td class="text-nowrap">
+                            <a
+                                href="{% url 'usuario_editar' usuario.id %}"
+                                class="btn btn-sm btn-outline-primary"
+                            >
+                                Editar
+                            </a>
+
+                            {% if usuario != request.user %}
+                                <form
+                                    method="post"
+                                    action="{% url 'usuario_cambiar_estado' usuario.id %}"
+                                    class="d-inline"
+                                    onsubmit="return confirm('¿Deseas cambiar el estado de esta cuenta?');"
+                                >
+                                    {% csrf_token %}
+
+                                    {% if usuario.is_active %}
+                                        <button
+                                            type="submit"
+                                            class="btn btn-sm btn-outline-danger"
+                                        >
+                                            Desactivar
+                                        </button>
+                                    {% else %}
+                                        <button
+                                            type="submit"
+                                            class="btn btn-sm btn-outline-success"
+                                        >
+                                            Activar
+                                        </button>
+                                    {% endif %}
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-4">
+                            No existen usuarios registrados.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

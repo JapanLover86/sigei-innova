@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}Predicción de demanda | SIGEI Innova{% endblock %}
+{% block page_title %}Predicción de demanda{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 fw-bold mb-1">
+            Predicción de demanda
+        </h1>
+
+        <p class="text-muted mb-0">
+            Estimación basada en las ventas registradas durante los últimos 30 días.
+        </p>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">
+            Generar predicción
+        </button>
+    </form>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags|default:'info' }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="alert alert-info">
+    <strong>Metodología:</strong> promedio móvil simple de ventas de los últimos
+    30 días. El sistema estima la demanda diaria, días de cobertura y compra
+    sugerida para 30 días.
+</div>
+
+{% if resultados %}
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white border-0 pt-4 px-4">
+            <h2 class="h5 fw-bold mb-0">
+                Resultado de la predicción actual
+            </h2>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Producto</th>
+                        <th>Stock actual</th>
+                        <th>Ventas 30 días</th>
+                        <th>Demanda diaria</th>
+                        <th>Cobertura</th>
+                        <th>Compra sugerida</th>
+                        <th>Riesgo</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for item in resultados %}
+                        <tr>
+                            <td>
+                                <strong>{{ item.registro.producto.nombre }}</strong>
+                                <div class="small text-muted">
+                                    {{ item.registro.producto.codigo }}
+                                </div>
+                            </td>
+
+                            <td>{{ item.stock_actual }}</td>
+                            <td>{{ item.total_vendido }}</td>
+                            <td>{{ item.demanda_diaria }}</td>
+
+                            <td>
+                                {% if item.dias_cobertura %}
+                                    {{ item.dias_cobertura }} días
+                                {% else %}
+                                    Sin datos
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                <strong>{{ item.cantidad_sugerida }}</strong>
+                            </td>
+
+                            <td>
+                                {% if item.riesgo == "CRÍTICO" %}
+                                    <span class="badge text-bg-danger">
+                                        Crítico
+                                    </span>
+                                {% elif item.riesgo == "MEDIO" %}
+                                    <span class="badge text-bg-warning">
+                                        Medio
+                                    </span>
+                                {% elif item.riesgo == "BAJO" %}
+                                    <span class="badge text-bg-success">
+                                        Bajo
+                                    </span>
+                                {% else %}
+                                    <span class="badge text-bg-secondary">
+                                        Sin datos
+                                    </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endif %}
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white border-0 pt-4 px-4">
+        <h2 class="h5 fw-bold mb-1">
+            Historial de predicciones
+        </h2>
+
+        <p class="text-muted small mb-0">
+            Últimas predicciones guardadas en el sistema.
+        </p>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Fecha</th>
+                    <th>Producto</th>
+                    <th>Período</th>
+                    <th>Demanda predicha / día</th>
+                    <th>Método</th>
+                    <th>Observación</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for prediccion in historial %}
+                    <tr>
+                        <td>
+                            {{ prediccion.fecha_prediccion|date:"d/m/Y H:i" }}
+                        </td>
+
+                        <td>
+                            <strong>{{ prediccion.producto.nombre }}</strong>
+                        </td>
+
+                        <td>{{ prediccion.periodo }}</td>
+                        <td>{{ prediccion.demanda_predicha }}</td>
+                        <td>{{ prediccion.metodo|default:"-" }}</td>
+                        <td>{{ prediccion.observacion|default:"-" }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-4">
+                            Aún no se han generado predicciones.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

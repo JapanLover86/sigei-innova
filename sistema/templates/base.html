@@ -50,6 +50,10 @@
                         Inventario
                     </a>
 
+                    <a class="sidebar-link ms-3 small" href="{% url 'alertas_stock_lista' %}">
+                        Alertas de stock
+                    </a>
+
                     <a class="sidebar-link ms-3 small" href="{% url 'kardex_lista' %}">
                         Kardex
                     </a>
@@ -65,7 +69,9 @@
                     <a class="sidebar-link ms-3 small" href="{% url 'proveedor_lista' %}">
                         Proveedores
                     </a>
+                {% endif %}
 
+                {% if perfil.rol == "ADMIN" or perfil.rol == "ALMACENERO" or perfil.rol == "VENDEDOR" %}
                     <a class="sidebar-link" href="{% url 'salida_crear' %}">
                         Salidas
                     </a>
@@ -75,13 +81,25 @@
                     </a>
                 {% endif %}
 
-                {% if perfil.rol == "ADMIN" or perfil.rol == "GERENTE" %}
-                    <a class="sidebar-link" href="#">
+                {% if perfil.rol == "ADMIN" or perfil.rol == "GERENTE" or perfil.rol == "ALMACENERO" %}
+                    <a class="sidebar-link" href="{% url 'reporte_inicio' %}">
                         Reportes
+                    </a>
+
+                    <a class="sidebar-link" href="{% url 'prediccion_inicio' %}">
+                        Predicción
                     </a>
                 {% endif %}
 
                 {% if perfil.rol == "ADMIN" %}
+                    <a class="sidebar-link" href="{% url 'usuario_lista' %}">
+                        Usuarios
+                    </a>
+
+                    <a class="sidebar-link" href="{% url 'bitacora_lista' %}">
+                        Bitácora
+                    </a>
+
                     <a class="sidebar-link" href="/admin/">
                         Administración
                     </a>

@@ -1,8 +1,10 @@
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
-from .models import Cliente, MovimientoStock, Proveedor
+from .models import Bitacora, Cliente, MovimientoStock, Proveedor
 from productos.models import Producto
 from usuarios.decorators import rol_requerido
+from .auditoria import registrar_bitacora
+from django.db.models import Q
 
 from .forms import (
     AjusteInventarioForm,
@@ -67,6 +69,16 @@ def stock_inicial(request):
                 observacion=observacion,
             )
 
+            registrar_bitacora(
+                request,
+                accion="Registro de stock inicial",
+                modulo="Inventario",
+                descripcion=(
+                    f"Producto: {producto.nombre}; "
+                    f"stock físico registrado: {cantidad}."
+                ),
+            )
+
             messages.success(
                 request,
                 f"Stock inicial registrado correctamente para "
@@ -116,6 +128,18 @@ def entrada_crear(request):
                 observacion=observacion,
             )
 
+            registrar_bitacora(
+                request,
+                accion="Registro de entrada",
+                modulo="Entradas",
+                descripcion=(
+                    f"Entrada #{entrada.id_entrada}; "
+                    f"producto: {producto.nombre}; "
+                    f"cantidad: {cantidad}; "
+                    f"precio unitario: S/ {precio_unitario}."
+                ),
+            )
+
             messages.success(
                 request,
                 f"Entrada #{entrada.id_entrada} registrada correctamente.",
@@ -134,7 +158,7 @@ def entrada_crear(request):
     )
 
 
-@rol_requerido("ADMIN", "ALMACENERO")
+@rol_requerido("ADMIN", "ALMACENERO", "VENDEDOR")
 def salida_crear(request):
     perfil = getattr(request.user, "perfil", None)
 
@@ -163,6 +187,18 @@ def salida_crear(request):
                     precio_unitario=precio_unitario,
                     id_usuario_sistema=perfil.id_usuario_sistema,
                     observacion=observacion,
+                )
+
+                registrar_bitacora(
+                    request,
+                    accion="Registro de salida",
+                    modulo="Salidas",
+                    descripcion=(
+                        f"Salida #{salida.id_salida}; "
+                        f"producto: {producto.nombre}; "
+                        f"cantidad: {cantidad}; "
+                        f"precio unitario: S/ {precio_unitario}."
+                    ),
                 )
 
                 messages.success(
@@ -249,6 +285,18 @@ def ajuste_inventario(request):
                 )
 
                 signo = "+" if diferencia > 0 else ""
+
+                registrar_bitacora(
+                    request,
+                    accion="Ajuste de inventario",
+                    modulo="Inventario",
+                    descripcion=(
+                        f"Producto: {producto_actualizado.nombre}; "
+                        f"variación: {diferencia}; "
+                        f"nuevo stock: {producto_actualizado.stock_actual}; "
+                        f"motivo: {motivo}"
+                    ),
+                )
 
                 messages.success(
                     request,
@@ -473,3 +521,30 @@ def cliente_desactivar(request, id_cliente):
         )
 
     return redirect("cliente_lista")
+
+
+@rol_requerido("ADMIN")
+def bitacora_lista(request):
+    busqueda = request.GET.get("q", "").strip()
+
+    registros = Bitacora.objects.all().order_by(
+        "-fecha",
+        "-id_bitacora",
+    )
+
+    if busqueda:
+        registros = registros.filter(
+            Q(accion__icontains=busqueda)
+            | Q(modulo__icontains=busqueda)
+            | Q(descripcion__icontains=busqueda)
+            | Q(ip_origen__icontains=busqueda)
+        )
+
+    return render(
+        request,
+        "inventario/bitacora.html",
+        {
+            "registros": registros[:200],
+            "busqueda": busqueda,
+        },
+    )

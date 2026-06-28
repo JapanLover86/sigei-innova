@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Reportes | SIGEI Innova{% endblock %}
+{% block page_title %}Reportes del sistema{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h1 class="h3 fw-bold mb-1">Reportes</h1>
+    <p class="text-muted mb-0">
+        Descarga información del inventario y Kardex en PDF o Excel.
+    </p>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body p-4">
+                <h2 class="h5 fw-bold">
+                    Reporte de inventario
+                </h2>
+
+                <p class="text-muted">
+                    Productos activos, stock actual, stock mínimo,
+                    precios y estado de disponibilidad.
+                </p>
+
+                <div class="d-flex gap-2">
+                    <a
+                        href="{% url 'inventario_pdf' %}"
+                        class="btn btn-danger"
+                    >
+                        Descargar PDF
+                    </a>
+
+                    <a
+                        href="{% url 'inventario_excel' %}"
+                        class="btn btn-success"
+                    >
+                        Descargar Excel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body p-4">
+                <h2 class="h5 fw-bold">
+                    Reporte de Kardex
+                </h2>
+
+                <p class="text-muted">
+                    Historial completo de entradas, salidas,
+                    ajustes y saldo de stock.
+                </p>
+
+                <div class="d-flex gap-2">
+                    <a
+                        href="{% url 'kardex_pdf' %}"
+                        class="btn btn-danger"
+                    >
+                        Descargar PDF
+                    </a>
+
+                    <a
+                        href="{% url 'kardex_excel' %}"
+                        class="btn btn-success"
+                    >
+                        Descargar Excel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+
+    <style>
+        @page {
+            size: A4 landscape;
+            margin: 1cm;
+        }
+
+        body {
+            font-family: Helvetica;
+            font-size: 8pt;
+        }
+
+        h1 {
+            font-size: 16pt;
+            margin-bottom: 4px;
+        }
+
+        .subtitulo {
+            color: #555555;
+            margin-bottom: 14px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background-color: #e9ecef;
+            font-weight: bold;
+        }
+
+        th,
+        td {
+            border: 1px solid #bdbdbd;
+            padding: 5px;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .footer {
+            margin-top: 15px;
+            font-size: 8pt;
+            color: #555555;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Reporte de Inventario</h1>
+
+    <p class="subtitulo">
+        SIGEI Innova | Fecha de emisión:
+        {{ fecha_reporte|date:"d/m/Y H:i" }}
+    </p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Producto</th>
+                <th>Categoría</th>
+                <th>Marca</th>
+                <th>Unidad</th>
+                <th>Stock actual</th>
+                <th>Stock mínimo</th>
+                <th>Precio compra</th>
+                <th>Precio venta</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for producto in productos %}
+                <tr>
+                    <td>{{ producto.codigo }}</td>
+                    <td>{{ producto.nombre }}</td>
+                    <td>{{ producto.categoria.nombre }}</td>
+                    <td>{{ producto.marca.nombre }}</td>
+                    <td>{{ producto.unidad }}</td>
+                    <td class="text-right">{{ producto.stock_actual }}</td>
+                    <td class="text-right">{{ producto.stock_minimo }}</td>
+                    <td class="text-right">
+                        S/ {{ producto.precio_compra|floatformat:2 }}
+                    </td>
+                    <td class="text-right">
+                        S/ {{ producto.precio_venta|floatformat:2 }}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="9">
+                        No existen productos activos registrados.
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <p class="footer">
+        Valor estimado del inventario:
+        <strong>S/ {{ valor_total|floatformat:2 }}</strong>
+    </p>
+</body>
+</html>

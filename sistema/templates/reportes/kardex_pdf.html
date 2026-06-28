@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+
+    <style>
+        @page {
+            size: A4 landscape;
+            margin: 1cm;
+        }
+
+        body {
+            font-family: Helvetica;
+            font-size: 7.5pt;
+        }
+
+        h1 {
+            font-size: 16pt;
+            margin-bottom: 4px;
+        }
+
+        .subtitulo {
+            color: #555555;
+            margin-bottom: 14px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background-color: #e9ecef;
+            font-weight: bold;
+        }
+
+        th,
+        td {
+            border: 1px solid #bdbdbd;
+            padding: 4px;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Reporte de Kardex</h1>
+
+    <p class="subtitulo">
+        SIGEI Innova | Fecha de emisión:
+        {{ fecha_reporte|date:"d/m/Y H:i" }}
+    </p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Producto</th>
+                <th>Tipo</th>
+                <th>Referencia</th>
+                <th>Cantidad</th>
+                <th>Stock anterior</th>
+                <th>Stock actual</th>
+                <th>Observación</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for movimiento in movimientos %}
+                <tr>
+                    <td>
+                        {{ movimiento.fecha|date:"d/m/Y H:i" }}
+                    </td>
+
+                    <td>
+                        {{ movimiento.producto.nombre }}
+                    </td>
+
+                    <td>
+                        {{ movimiento.tipo_movimiento }}
+                    </td>
+
+                    <td>
+                        {{ movimiento.referencia|default:"-" }}
+                    </td>
+
+                    <td class="text-right">
+                        {{ movimiento.cantidad }}
+                    </td>
+
+                    <td class="text-right">
+                        {{ movimiento.stock_anterior }}
+                    </td>
+
+                    <td class="text-right">
+                        {{ movimiento.stock_actual }}
+                    </td>
+
+                    <td>
+                        {{ movimiento.observacion|default:"-" }}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="8">
+                        No existen movimientos registrados.
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

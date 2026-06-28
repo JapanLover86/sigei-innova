@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Bitácora | SIGEI Innova{% endblock %}
+{% block page_title %}Bitácora del sistema{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 fw-bold mb-1">
+            Bitácora del sistema
+        </h1>
+
+        <p class="text-muted mb-0">
+            Registro de acciones realizadas dentro de SIGEI Innova.
+        </p>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-2">
+            <div class="col-md-9">
+                <input
+                    type="search"
+                    name="q"
+                    class="form-control"
+                    value="{{ busqueda }}"
+                    placeholder="Buscar por acción, módulo, descripción o IP..."
+                >
+            </div>
+
+            <div class="col-md-3 d-grid">
+                <button type="submit" class="btn btn-primary">
+                    Buscar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Fecha</th>
+                    <th>Usuario SQL</th>
+                    <th>Acción</th>
+                    <th>Módulo</th>
+                    <th>Descripción</th>
+                    <th>IP</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for registro in registros %}
+                    <tr>
+                        <td>
+                            {{ registro.fecha|date:"d/m/Y H:i" }}
+                        </td>
+
+                        <td>
+                            {% if registro.id_usuario %}
+                                Usuario #{{ registro.id_usuario }}
+                            {% else %}
+                                Sistema / sin vínculo
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <strong>{{ registro.accion }}</strong>
+                        </td>
+
+                        <td>
+                            {{ registro.modulo|default:"-" }}
+                        </td>
+
+                        <td>
+                            {{ registro.descripcion|default:"-" }}
+                        </td>
+
+                        <td>
+                            {{ registro.ip_origen|default:"-" }}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-4">
+                            Aún no existen registros en la bitácora.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

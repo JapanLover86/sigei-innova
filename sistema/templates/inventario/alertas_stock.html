@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}Alertas de stock | SIGEI Innova{% endblock %}
+{% block page_title %}Alertas de inventario{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 fw-bold mb-1">
+            Alertas de stock
+        </h1>
+
+        <p class="text-muted mb-0">
+            Productos que requieren reposición o revisión inmediata.
+        </p>
+    </div>
+
+    <a
+        href="{% url 'inventario_lista' %}"
+        class="btn btn-outline-secondary"
+    >
+        Volver al inventario
+    </a>
+</div>
+
+<div class="row g-4">
+    <div class="col-xl-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-danger text-white border-0 pt-4 px-4">
+                <h2 class="h5 fw-bold mb-1">
+                    Stock crítico
+                </h2>
+
+                <p class="small mb-0">
+                    Productos sin unidades disponibles.
+                </p>
+            </div>
+
+            <div class="card-body p-0">
+                {% if productos_sin_stock %}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Stock</th>
+                                    <th>Mínimo</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {% for producto in productos_sin_stock %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ producto.nombre }}</strong>
+                                            <div class="small text-muted">
+                                                {{ producto.codigo }}
+                                            </div>
+                                        </td>
+
+                                        <td class="text-danger fw-bold">
+                                            {{ producto.stock_actual }}
+                                        </td>
+
+                                        <td>{{ producto.stock_minimo }}</td>
+
+                                        <td>
+                                            <a
+                                                href="{% url 'entrada_crear' %}"
+                                                class="btn btn-sm btn-outline-success"
+                                            >
+                                                Registrar entrada
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="p-4 text-success">
+                        No existen productos sin stock.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-warning border-0 pt-4 px-4">
+                <h2 class="h5 fw-bold mb-1">
+                    Stock bajo
+                </h2>
+
+                <p class="small mb-0">
+                    Productos en el nivel mínimo o próximos a agotarse.
+                </p>
+            </div>
+
+            <div class="card-body p-0">
+                {% if productos_stock_bajo %}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Stock</th>
+                                    <th>Mínimo</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {% for producto in productos_stock_bajo %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ producto.nombre }}</strong>
+                                            <div class="small text-muted">
+                                                {{ producto.codigo }}
+                                            </div>
+                                        </td>
+
+                                        <td class="text-warning fw-bold">
+                                            {{ producto.stock_actual }}
+                                        </td>
+
+                                        <td>{{ producto.stock_minimo }}</td>
+
+                                        <td>
+                                            <a
+                                                href="{% url 'entrada_crear' %}"
+                                                class="btn btn-sm btn-outline-success"
+                                            >
+                                                Registrar entrada
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="p-4 text-success">
+                        No existen productos con stock bajo.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

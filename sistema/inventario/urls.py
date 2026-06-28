@@ -1,4 +1,5 @@
 from django.urls import path
+from .alertas import alertas_stock_lista
 
 from .views import (
     ajuste_inventario,
@@ -15,6 +16,7 @@ from .views import (
     proveedor_lista,
     salida_crear,
     stock_inicial,
+    bitacora_lista,
 )
 
 urlpatterns = [
@@ -24,6 +26,8 @@ urlpatterns = [
     path("salidas/nueva/", salida_crear, name="salida_crear"),
     path("ajustes/nuevo/", ajuste_inventario, name="ajuste_inventario"),
     path("kardex/", kardex_lista, name="kardex_lista"),
+    path("bitacora/", bitacora_lista, name="bitacora_lista"),
+    path("alertas/", alertas_stock_lista, name="alertas_stock_lista"),
 
     path("proveedores/", proveedor_lista, name="proveedor_lista"),
     path("proveedores/nuevo/", proveedor_crear, name="proveedor_crear"),
